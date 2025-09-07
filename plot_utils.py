@@ -7,6 +7,7 @@ with appropriate color coding and legends.
 
 Functions:
     plot_region_classifications: Visualizes classified regions with color coding
+    plot_combined_spectrograms: Function for energy + classification plots
 """
 
 import numpy as np
