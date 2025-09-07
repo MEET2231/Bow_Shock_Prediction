@@ -1,3 +1,1 @@
-
-print(var_info)
-print(var_info_epoch)
+        # dist_chunk = dist_chunk.swapaxes(1, 3)

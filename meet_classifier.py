@@ -55,7 +55,7 @@ def normalize_data(X, verbose=True):
 model = load_model(r"D:\mms\Data\models\cnn_dis_201711_verify.h5")
 # model.summary()
 
-fpi_cdf_file = cdflib.CDF(r"D:\mms\Data\mms\mms1\fpi\fast\l2\dis-dist\2023\1\mms1_fpi_fast_l2_dis-dist_20230101200000_v3.4.0.cdf")
+fpi_cdf_file = cdflib.CDF(r"D:\mms\Data\mms\mms1\fpi\fast\l2\dis-dist\2018\11\mms1_fpi_fast_l2_dis-dist_20181114160000_v3.4.0.cdf")
 var_name = 'mms1' + '_' + 'dis' + '_dist_fast'
 var_info = fpi_cdf_file.varinq(var_name)
 var_info_epoch = fpi_cdf_file.varinq('Epoch')
@@ -81,7 +81,7 @@ for start_idx in range(0, num_records, chunk_size):
     try:
         dist_chunk = fpi_cdf_file.varget(var_name, startrec=start_idx, endrec=end_idx-1)
         epoch_chunk = fpi_cdf_file.varget('Epoch', startrec=start_idx, endrec=min(end_idx-1, epoch_records-1))
-        dist_chunk = dist_chunk.swapaxes(1, 3)
+        # dist_chunk = dist_chunk.swapaxes(1, 3)
         # Prepare data for classificator: normalize and add extra dimension - 'channel'
         dist_chunk = normalize_data(dist_chunk, verbose=False)
         dist_chunk = dist_chunk.reshape(dist_chunk.shape + (1,))
