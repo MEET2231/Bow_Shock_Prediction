@@ -9,43 +9,44 @@ def normalize_data(X, verbose=True):
 
     Parameters:
         X - [epoch, Phi, Theta, Energy]
-
+    
+    Returns:
+        Normalized array with same shape as input
     """
-
-    # Old way
+    # Optimized version - same logic but more efficient
     if verbose:
         print('Normalizing data array', X.shape)
-    try:
-        min_value = np.min(X[np.nonzero(X)])
-    except ValueError:
+    
+    # Find minimum non-zero value (with error handling)
+    nonzero_mask = ~np.isclose(X, 0, rtol=0, atol=1e-30)
+    if not np.any(nonzero_mask):
         print('Warning! All elements of X are zero, returning a zero-array.')
         return X
+    
+    min_value = np.min(X[nonzero_mask])
+    
+    # Replace zeros with minimum value
     if verbose:
         print('Replacing zeros with min...')
-    X = np.where(np.isclose(X, 0, rtol=0, atol=1e-30), min_value, X)
+    X = np.where(nonzero_mask, X, min_value)
+    
+    # Log transform
     if verbose:
         print('Computing log10...')
     X = np.log10(X)
+    
+    # Normalize to [0, 1] range
     if verbose:
         print('Subtracting min...')
-    X -= X.min()
-
-    '''
-    # New way
-    min_value = 1e-30
-    if verbose:
-        print('Replacing negatives with zeros...')
-    X = np.where(X > 0, X, min_value)
-    if verbose:
-        print('Computing log10...')
-    X = np.log10(X)
-    if verbose:
-        print('Subtracting min...')
-    X += 30
-    '''
+    X_min = X.min()
+    X -= X_min
+        
     if verbose:
         print('Normalizing to 1...')
-    X /= X.max()
+    X_max = X.max()
+    if X_max > 0:  # Avoid division by zero
+        X /= X_max
+    
     if verbose:
         print('Rolling along Phi...')
     X = np.roll(X, 16, axis=X.ndim-2)
@@ -106,17 +107,9 @@ else:
     
 # Ensure data is available
 if len(all_predictions) > 0:
-    # Plot 1: Epoch vs Probability
-    plt.figure(figsize=(10, 5))
-    plt.plot(epoch, predictions[:, 1], label='Probability of Class 1')
-    plt.xlabel('Epoch')
-    plt.ylabel('Probability')
-    plt.title('Epoch vs Probability')
-    plt.legend()
-    plt.grid()
-    plt.show()
-
-    # Plot 2: CNN Class Output as Color-coded Bar
+    print(f"Total epochs processed: {len(epoch)}")
+    print(f"Predictions shape: {predictions.shape}")
+    # Plot 1: CNN Class Output as Color-coded Bar
     import matplotlib.colors as mcolors
     from matplotlib.patches import Patch
 
