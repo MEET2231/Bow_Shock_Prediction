@@ -41,6 +41,8 @@ import matplotlib.pyplot as plt
 # Import custom plotting utilities
 import plot_utils
 
+regions = {-1: 'Unknown', 0: 'Solar Wind', 1: 'Foreshock', 2: 'Magnetosheath', 3: 'Magnetosphere'}
+lbl_spec = {'Copyright': 'Meet Amitbhai Modi (modimeet05@gmail.com)'}
 
 def normalize_data(X, verbose=True):
     """ Compute logarithm and normalize the data for learning.
@@ -142,7 +144,90 @@ if len(all_predictions) > 0:
 else:
     print(f"Warning: No valid data processed from {fpi_cdf_file}.")
 
-    
+
+
+# Exporting results as a CDF file  
+lbl_cdf_file = cdflib.cdfwrite.CDF('output_labels.cdf', cdf_spec=lbl_spec, delete=True)
+vs_pred = {
+    'Variable': 'label',   # Name of the variable inside the CDF
+    'Data_Type': 1,                     # CDF_INT1 (8-bit integer, signed)
+    'Num_Elements': 1,                  # Each record holds 1 element (scalar, not a vector)
+    'Rec_Vary': True,                   # Records vary (each time step can have different values)
+    'Var_Type': 'zVariable',            # It's a zVariable (modern, flexible CDF variable type)
+    'Dim_Sizes': [],                    # No extra dimensions (1D variable over time)
+    'Num_Dims': 0,                      # Explicitly says: zero dimensions besides record index
+    'Sparse': 'No_sparse',              # Don’t use sparse storage (all records stored fully)
+    'Compress': 6,                      # Apply compression (gzip level 6)
+    'Pad': np.array([-1], dtype=np.int8) # Fill value for missing records (-1 means no label)
+}
+attrs_pred = {
+    'VAR_NOTES': 'Predicted label' + str(regions),
+    'filename': 'mms1_fpi_fast_l2_dis-dist_20181114160000_v3.4.0.cdf'
+}
+lbl_cdf_file.write_var(vs_pred, var_attrs=attrs_pred, var_data=label)
+
+# writing probabilities
+vs_prob = {
+    'Variable': 'probability',  # name, e.g. probability_mms1_dis_fast
+    'Data_Type': 21,                         # CDF_REAL4 (32-bit float)
+    'Num_Elements': 1,                       # one element per dimension
+    'Rec_Vary': True,                        # varies with each record (time step)
+    'Var_Type': 'zVariable',                 # modern flexible variable type
+    'Dim_Sizes': [len(regions)-1],           # vector length = number of classes - 1
+    'Num_Dims': 0,                           # dimension info (0 means defined in Dim_Sizes only)
+    'Sparse': 'No_sparse',                   # don’t use sparse storage
+    'Compress': 6,                           # gzip compression level 6
+    'Pad': np.array([0.], dtype=np.float32)  # fill value = 0.0 for missing data
+}
+attrs_prob = {
+    'VAR_NOTES': 'Probability of the predicted label.',
+    'filename': 'mms1_fpi_fast_l2_dis-dist_20181114160000_v3.4.0.cdf'
+}
+lbl_cdf_file.write_var(vs_prob, var_attrs=attrs_prob, var_data=predictions)
+
+# writiing epoch
+epoch_info = {
+    'Variable': 'epoch',           # name, e.g. epoch_mms1_dis_fast
+    'Data_Type': 33,                            # CDF_TIME_TT2000 (nanoseconds since J2000)
+    'Num_Elements': 1,                          # one timestamp per record
+    'Rec_Vary': True,                           # changes for every record
+    'Var_Type': 'zVariable',                    # modern flexible variable type
+    'Dim_Sizes': [],                            # scalar (no extra dims)
+    'Num_Dims': 0,                              # no extra dimensions
+    'Sparse': 'No_sparse',                      # don’t use sparse storage
+    'Compress': 6,                              # gzip compression level 6
+    'Pad': np.array([-9223372036854775807], dtype=np.int64), # fill value for missing epochs
+    'Data_Type_Description': 'CDF_TIME_TT2000'  # human-readable description
+}
+epoch_attrs = {
+    'CATDESC': 'Nanoseconds since J2000',       # description
+    'DELTA_PLUS_VAR': 'Epoch_plus_var',         # references to optional timing uncertainty variables
+    'DELTA_MINUS_VAR': 'Epoch_minus_var',
+    'FIELDNAM': 'Time tags',                    # field name
+    'FILLVAL': np.array([-9223372036854775808], dtype=np.int64), # missing-value code
+    'LABLAXIS': 'Epoch',                        # label for plotting
+    'MONOTON': 'INCREASE',                      # expected to increase monotonically
+    'REFERENCE_POSITION': 'Rotating Earth Geoid', # time reference frame
+    'SCALETYP': 'linear',                       # scaling type
+    'SI_CONVERSION': '1.0e-9>s',                # nanoseconds to seconds
+    'TIME_BASE': 'J2000',                       # epoch zero point
+    'TIME_SCALE': 'Terrestrial Time',           # time scale
+    'UNITS': 'ns',                              # units
+    'VALIDMIN': np.array([-315575942816000000], dtype=np.int64), # min valid epoch
+    'VALIDMAX': np.array([3155716868184000000], dtype=np.int64), # max valid epoch
+    'VAR_NOTES': 'MMS1 FPI/DIS Fast Survey data begin-time; derived from packet time.',
+    'VAR_TYPE': 'support_data'                  # indicates it’s an auxiliary variable
+}
+lbl_cdf_file.write_var(epoch_info, var_attrs=epoch_attrs, var_data=epoch)
+print(getattr(epoch_info, 'Variable', 'Variable name not available'))
+
+
+
+
+
+
+
+
 # Ensure data is available
 if len(all_predictions) > 0:
     print(f"Total epochs processed: {len(epoch)}")
@@ -167,3 +252,5 @@ if len(all_predictions) > 0:
     #     plot_utils.plot_combined_spectrograms(epoch, label, energy_spectrogram, energy_data)
 else:
     print("No data available to plot.")
+
+
