@@ -22,7 +22,7 @@ Working Logic:
      * 3/Red: Magnetosphere (MSP)
 
 4. Visualization:
-   - Displays color-coded classification results over time
+   - Displays color-coded classification results over time (using plot_utils module)
    - Uses a custom color scheme to distinguish between different regions
    - Includes a legend for region identification
 
@@ -38,6 +38,8 @@ from tensorflow.keras.models import load_model
 import cdflib
 import numpy as np
 import matplotlib.pyplot as plt
+# Import custom plotting utilities
+import plot_utils
 
 
 def normalize_data(X, verbose=True):
@@ -145,32 +147,23 @@ else:
 if len(all_predictions) > 0:
     print(f"Total epochs processed: {len(epoch)}")
     print(f"Predictions shape: {predictions.shape}")
-    # Plot 1: CNN Class Output as Color-coded Bar
-    import matplotlib.colors as mcolors
-    from matplotlib.patches import Patch
-
-    # Define color mapping: 0=Blue, 1=Black, 2=Yellow, 3=Red
-    class_colors = ['blue', 'black', 'yellow', 'red']
-    cmap = mcolors.ListedColormap(class_colors)
-    bounds = [0, 1, 2, 3, 4]
-    norm = mcolors.BoundaryNorm(bounds, cmap.N)
-
-    plt.figure(figsize=(12, 2))
-    # Show as an image: shape (1, N)
-    plt.imshow(label[np.newaxis, :], aspect='auto', cmap=cmap, norm=norm)
-    plt.yticks([])
-    plt.xlabel('Epoch')
-    plt.title('CNN Class Output (Blue: SW, Black: 1/F, Yellow: MSH, Red: MSP)')
-
-    # Custom legend
-    legend_elements = [
-        Patch(facecolor='blue', edgecolor='k', label='0/SW'),
-        Patch(facecolor='black', edgecolor='k', label='1/F'),
-        Patch(facecolor='yellow', edgecolor='k', label='2/MSH'),
-        Patch(facecolor='red', edgecolor='k', label='3/MSP')
-    ]
-    plt.legend(handles=legend_elements, loc='upper right', ncol=4, bbox_to_anchor=(1, 1.5))
-    plt.tight_layout()
-    plt.show()
+    
+    # Check for class distribution
+    unique_labels, label_counts = np.unique(label, return_counts=True)
+    print("Class distribution:")
+    for lbl, cnt in zip(unique_labels, label_counts):
+        print(f"  Class {int(lbl)}: {cnt} samples ({cnt/len(label):.2%})")
+    
+    # Plot the region classifications using the plot_utils module
+    plot_utils.plot_region_classifications(epoch, label)
+    
+    # Optionally, you can also generate a combined plot with energy spectrogram
+    # To use this, you need to generate energy spectrogram data first
+    # Example:
+    # energy_var = 'mms1_dis_energy_fast'
+    # if energy_var in fpi_cdf_file.cdf_info().zVariables:
+    #     energy_data = fpi_cdf_file.varget(energy_var)
+    #     energy_spectrogram = generate_energy_spectrogram(fpi_cdf_file, var_name, num_records)
+    #     plot_utils.plot_combined_spectrograms(epoch, label, energy_spectrogram, energy_data)
 else:
     print("No data available to plot.")
