@@ -1,3 +1,39 @@
+"""
+MEET Magnetosphere Region Classifier
+
+This script classifies magnetosphere regions using a pre-trained CNN model based on MMS (Magnetospheric
+Multiscale Mission) Fast Plasma Investigation (FPI) particle distribution data.
+
+Working Logic:
+-------------
+1. Data Loading:
+   - Loads a CDF (Common Data Format) file containing MMS FPI distribution data
+   - Processes data in chunks to handle large files efficiently
+
+2. Data Preprocessing:
+   - Normalizes the distribution data using log transformation and scaling
+   - Prepares the data in the format expected by the CNN model (adds channel dimension)
+
+3. Classification:
+   - Uses a pre-trained CNN model to classify each distribution into one of four regions:
+     * 0/Blue: Solar Wind (SW)
+     * 1/Black: Ion Foreshock (1/F)
+     * 2/Yellow: Magnetosheath (MSH)
+     * 3/Red: Magnetosphere (MSP)
+
+4. Visualization:
+   - Displays color-coded classification results over time
+   - Uses a custom color scheme to distinguish between different regions
+   - Includes a legend for region identification
+
+The classifier helps identify different regions in Earth's magnetosphere and surrounding space,
+which is critical for studying space physics phenomena like magnetic reconnection, shocks, and
+boundary layers.
+
+Author: MEET
+Date: September 2023
+"""
+
 from tensorflow.keras.models import load_model
 import cdflib
 import numpy as np
