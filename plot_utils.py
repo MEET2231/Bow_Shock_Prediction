@@ -15,6 +15,59 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from matplotlib.patches import Patch
 
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+from cdflib.epochs import CDFepoch
+
+def plot_probability_stack(epoch, predictions, regions_dict):
+    """
+    Generates a stacked area plot of classification probabilities over time.
+
+    Parameters:
+    - epoch (np.array): Array of epoch times (TT2000 format).
+    - predictions (np.array): Array of shape (n_samples, n_classes) with probabilities.
+    - regions_dict (dict): Dictionary mapping class index to region name.
+    """
+    # Define the colors for each region, matching the paper's scheme
+    # 0: SW (Blue), 1: Foreshock (Black), 2: MSH (Yellow), 3: MSP (Red)
+    # The order must match the class indices from your model.
+    colors = ['blue', 'black', 'yellow', 'red']
+    
+    # Get the labels for the legend
+    class_indices = sorted([k for k in regions_dict if k >= 0])
+    labels = [regions_dict[i] for i in class_indices]
+
+    # Convert TT2000 epoch to datetime objects for better plotting
+    # This makes the x-axis human-readable.
+    try:
+        datetime_epoch = CDFepoch.to_datetime(epoch, to_np=True)
+    except Exception as e:
+        print(f"Could not convert epoch to datetime, plotting with raw values. Error: {e}")
+        datetime_epoch = epoch
+
+    fig, ax = plt.subplots(figsize=(15, 4))
+    
+    ax.stackplot(datetime_epoch, predictions.T, labels=labels, colors=colors, antialiased=True)
+
+    # --- Formatting the Plot ---
+
+    # --- THIS IS THE FIX ---
+    # Manually set the x-axis limits to the exact start and end of your data.
+    # This removes the default margins matplotlib adds.
+    ax.set_xlim(datetime_epoch[0], datetime_epoch[-1])
+    # --- END OF FIX ---
+
+    ax.set_ylim(0, 1)
+    ax.set_ylabel('Probability')
+    ax.set_xlabel('Time (UTC)')
+    ax.set_title('Magnetosphere Region Classification Probabilities')
+    
+    ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
+    
+    fig.autofmt_xdate() 
+    
+    plt.tight_layout(rect=[0, 0, 0.85, 1])
+    plt.show()
 
 def plot_region_classifications(epoch, label, figsize=(12, 2), show=True):
     """

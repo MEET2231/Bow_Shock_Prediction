@@ -133,10 +133,10 @@ def process_cdf_file(input_file_path, output_file_path, model):
 # --- Main Execution Block ---
 if __name__ == "__main__":
     # 1. DEFINE PATHS
-    input_directory = r"D:\mms\Data\mms\mms1\fpi\fast\l2\dis-dist\2017\11"
-    output_directory = r"D:\mms\Data\processed\2017\11"
+    input_directory = r"D:\mms\Data\mms\mms1\fpi\fast\l2\dis-dist\2023\1"
+    output_directory = r"D:\mms\Data\processed\2023\1"
     model_path = r"D:\mms\Data\models\cnn_dis_201711_verify.h5"
-    
+
     # 2. CREATE OUTPUT DIRECTORY IF IT DOESN'T EXIST
     os.makedirs(output_directory, exist_ok=True)
     
