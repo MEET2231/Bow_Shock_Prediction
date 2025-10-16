@@ -4,6 +4,8 @@ import numpy as np
 import cdflib
 import csv
 
+
+
 def find_shocks_in_file(cdf_path):
     """
     Identifies shock crossings in a single labeled CDF file.
@@ -47,7 +49,7 @@ def find_shocks_in_file(cdf_path):
 
         # Find indices where the absolute value of the indicator is greater than 1
         # This corresponds to a full jump from -1 to 1 or 1 to -1.
-        shock_indices = np.where(np.abs(shock_indicator) > 1)[0]
+        shock_indices = np.where(np.abs(shock_indicator) >= 1)[0]
         
         found_shocks = []
         if len(shock_indices) > 0:

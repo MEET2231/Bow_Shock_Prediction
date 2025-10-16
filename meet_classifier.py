@@ -96,7 +96,7 @@ def normalize_data(X, verbose=True):
 model = load_model(r"D:\mms\Data\models\cnn_dis_201711_verify.h5")
 # model.summary()
 
-fpi_cdf_file = cdflib.CDF(r"D:\mms\Data\mms\mms1\fpi\fast\l2\dis-dist\2018\11\mms1_fpi_fast_l2_dis-dist_20181114160000_v3.4.0.cdf")
+fpi_cdf_file = cdflib.CDF(r"D:\mms\Data\mms\mms1\fpi\fast\l2\dis-dist\2019\2\mms1_fpi_fast_l2_dis-dist_20190205040000_v3.4.0.cdf")
 var_name = 'mms1' + '_' + 'dis' + '_dist_fast'
 var_info = fpi_cdf_file.varinq(var_name)
 var_info_epoch = fpi_cdf_file.varinq('Epoch')
@@ -240,7 +240,7 @@ if len(all_predictions) > 0:
         print(f"  Class {int(lbl)}: {cnt} samples ({cnt/len(label):.2%})")
     
     # Plot the region classifications using the plot_utils module
-    plot_utils.plot_region_classifications(epoch, label)
+    plot_utils.plot_probability_stack(epoch, predictions, regions)
     
     # Optionally, you can also generate a combined plot with energy spectrogram
     # To use this, you need to generate energy spectrogram data first
