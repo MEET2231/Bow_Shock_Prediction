@@ -40,6 +40,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 # Import custom plotting utilities
 import plot_utils
+import config
 
 regions = {-1: 'Unknown', 0: 'Solar Wind', 1: 'Foreshock', 2: 'Magnetosheath', 3: 'Magnetosphere'}
 lbl_spec = {'Copyright': 'Meet Amitbhai Modi (modimeet05@gmail.com)'}
@@ -93,10 +94,10 @@ def normalize_data(X, verbose=True):
     return X
 
 
-model = load_model(r"D:\mms\Data\models\cnn_dis_201711_verify.h5")
+model = load_model(config.CNN_MODEL_201711_VERIFY)
 # model.summary()
 
-fpi_cdf_file = cdflib.CDF(r"D:\mms\Data\mms\mms1\fpi\fast\l2\dis-dist\2019\2\mms1_fpi_fast_l2_dis-dist_20190205040000_v3.4.0.cdf")
+fpi_cdf_file = cdflib.CDF(os.path.join(config.FPI_FAST_L2_DIS_DIST_2019_2, "mms1_fpi_fast_l2_dis-dist_20190205040000_v3.4.0.cdf"))
 var_name = 'mms1' + '_' + 'dis' + '_dist_fast'
 var_info = fpi_cdf_file.varinq(var_name)
 var_info_epoch = fpi_cdf_file.varinq('Epoch')
@@ -147,7 +148,7 @@ else:
 
 
 # Exporting results as a CDF file  
-lbl_cdf_file = cdflib.cdfwrite.CDF('output_labels.cdf', cdf_spec=lbl_spec, delete=True)
+lbl_cdf_file = cdflib.cdfwrite.CDF(config.OUTPUT_LABELS_CDF, cdf_spec=lbl_spec, delete=True)
 vs_pred = {
     'Variable': 'label',   # Name of the variable inside the CDF
     'Data_Type': 1,                     # CDF_INT1 (8-bit integer, signed)

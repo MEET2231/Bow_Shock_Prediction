@@ -1,7 +1,8 @@
 import pandas as pd
+import config
 
 # Define the path to your CSV file
-csv_file = r"D:\mms\BOW_SHOCK\database_and_overview_plots\SDB_10-Mar-2022_V1.0.csv"
+csv_file = config.SHOCK_DATABASE_CSV
 
 try:
     # Read the CSV file, skipping any lines that start with a '#' comment character

@@ -1,7 +1,11 @@
 import cdflib
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(''), '..')))
+import config
 
 
-cdf_file_path = r"D:\mms\Data\mms\mms1\fpi\fast\l2\dis-dist\2017\11\labeled\mms1_fpi_fast_l2_dis-dist_20171102020000_v3.4.0.cdf"
+cdf_file_path = os.path.join(config.LABELED_DATA_2017_11, "mms1_fpi_fast_l2_dis-dist_20171102020000_v3.4.0.cdf")
 
 cdf_file = cdflib.cdfread.CDF(cdf_file_path)
 info = cdf_file.cdf_info()

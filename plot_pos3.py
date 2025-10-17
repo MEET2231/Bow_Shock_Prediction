@@ -2,10 +2,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import numpy as np
+import config
 
 # --- 1. Load and Clean Data ---
 try:
-    df = pd.read_csv('SDB_10-Mar-2022_V1.0.csv', skiprows=53)
+    df = pd.read_csv(config.PLOT_POS_CSV, skiprows=53)
     df.rename(columns={'#time': 'time'}, inplace=True)
     df.columns = df.columns.str.strip()
 except FileNotFoundError:
