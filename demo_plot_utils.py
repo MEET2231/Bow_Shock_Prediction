@@ -8,6 +8,7 @@ of MMS region classifications and spectrograms.
 import numpy as np
 import matplotlib.pyplot as plt
 import plot_utils
+import config
 
 def demo_plot_utils():
     """

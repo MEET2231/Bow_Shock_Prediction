@@ -29,6 +29,7 @@ import glob
 from tensorflow.keras.models import load_model
 import cdflib
 import numpy as np
+import config
 
 # --- Global Configuration & Helper Functions ---
 
@@ -133,9 +134,9 @@ def process_cdf_file(input_file_path, output_file_path, model):
 # --- Main Execution Block ---
 if __name__ == "__main__":
     # 1. DEFINE PATHS
-    input_directory = r"D:\mms\Data\mms\mms1\fpi\fast\l2\dis-dist\2023\1"
-    output_directory = r"D:\mms\Data\processed\2023\1"
-    model_path = r"D:\mms\Data\models\cnn_dis_201711_verify.h5"
+    input_directory = config.FPI_FAST_L2_DIS_DIST_2023_1
+    output_directory = config.PROCESSED_DATA_2023_1
+    model_path = config.CNN_MODEL_201711_VERIFY
 
     # 2. CREATE OUTPUT DIRECTORY IF IT DOESN'T EXIST
     os.makedirs(output_directory, exist_ok=True)

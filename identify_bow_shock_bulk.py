@@ -6,6 +6,8 @@ import csv
 
 
 
+import config
+
 def find_shocks_in_file(cdf_path):
     """
     Identifies shock crossings in a single labeled CDF file.
@@ -78,10 +80,10 @@ def find_shocks_in_file(cdf_path):
 if __name__ == "__main__":
     # 1. DEFINE PATHS
     # Directory containing your 'labels_*.cdf' files
-    input_directory = r"D:\mms\Data\processed\2017\11"
+    input_directory = config.PROCESSED_DATA_2017_11
     
     # The final output CSV file
-    output_csv_file = r"D:\mms\Data\processed\bow_shock_crossings_2017_11.csv"
+    output_csv_file = config.BOW_SHOCK_CROSSINGS_CSV
 
     # 2. FIND ALL LABELED CDF FILES
     # The pattern 'labels_*.cdf' ensures we only get the files from the previous step

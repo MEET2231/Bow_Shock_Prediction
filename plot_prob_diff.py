@@ -1,10 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import cdflib
+import config
 
 # --- Configuration ---
 # The CDF file created by your classifier script
-input_cdf_file = 'output_labels.cdf' 
+input_cdf_file = config.OUTPUT_LABELS_CDF 
 
 # --- Main Script ---
 
